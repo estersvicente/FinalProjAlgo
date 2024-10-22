@@ -42,7 +42,8 @@ class BookingSystem{
         }
     }
 
-    void CancelSeat(){
+
+    void RemoveSeat(){
         int seatNum;
         cout << "Enter seat number you wish to cancel: "<< endl;
         cin >> seatNum;
@@ -59,7 +60,7 @@ class BookingSystem{
         return;
         }
 
-        for (int i = 0; temp != nullptr && i < seatNum - 1; i++) {
+        for (int i = 0; temp != NULL && i < seatNum - 1; i++) {
             temp = temp->next;
         }
         Node* nodeDelete = temp->next;
