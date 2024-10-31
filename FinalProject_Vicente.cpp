@@ -1,9 +1,15 @@
 #include <iostream>
+#include <vector>
+#include <iomanip>
 
 using namespace std;
 
 class Node{
     public:
+    int row;
+    int seatNum;
+    double price;
+    bool booked;
     int data;
     Node *next;
     Node(){
@@ -11,7 +17,12 @@ class Node{
         next=NULL;
     }
 
- Node(int data){
+ Node(int data, int row, int seatNum, double price){
+
+        this -> row =row;
+        this -> seatNum = seatNum;
+        this -> price = price;
+        this -> booked = false;
         this -> data = data;
         this -> next = NULL;
     } 
@@ -19,9 +30,16 @@ class Node{
 
 class BookingSystem{
     Node *head;
+    vector<vector<Node>>seats;
 
     public:
+    BookingSystem() : head(nullptr) {
+        initializeSeats();
+    }
 
+    void initializeSeats(){
+        return;
+    }
     void BookSeat(){
         int seat;
         cout << "Enter seat number you wish to book: "<< endl;
@@ -85,11 +103,12 @@ class BookingSystem{
 
 int main(){
     BookingSystem list; 
+    list.printSeats();
 //creating menu
     int choice = 0;
     while (choice != 4){
         cout << "\nWelcome! Choose one of the following options:"
-                "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4.Exit"
+                "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4. Exit"
                 "\nChoose an option (1-4)" << endl;
         cin >> choice;
         cout << "choise is " << choice << endl;
