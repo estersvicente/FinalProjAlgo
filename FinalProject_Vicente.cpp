@@ -1,6 +1,4 @@
 #include <iostream>
-#include <vector>
-#include <iomanip>
 
 using namespace std;
 
@@ -10,36 +8,101 @@ class Node{
     int seatNum;
     double price;
     bool booked;
-    int data;
+    bool VIP;  
+
+
     Node *next;
     Node(){
-        data=0;
         next=NULL;
     }
 
- Node(int data, int row, int seatNum, double price){
-
+ Node(int row, int seatNum, double price, bool booked = false, bool VIP =false){
         this -> row =row;
         this -> seatNum = seatNum;
         this -> price = price;
         this -> booked = false;
-        this -> data = data;
+        this -> VIP = false;
         this -> next = NULL;
     } 
 };
 
+class Row {
+public:
+    Node* head;
+
+    Row() : head(nullptr) {
+
+    }
+
+    void addSeat(int seatNum, double price){
+        Node* newNode = new Node(1, seatNum, price);  
+        if (head == nullptr) {
+            head = newNode;
+        } 
+        else{
+            Node* temp = head;
+            while (temp->next != nullptr) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+        }
+    }
+
+    void printSeats() {
+        Node* temp = head;
+        while (temp != nullptr) {
+            cout << "Row: " << temp->row << ", Seat: " << temp->seatNum << ", Price: $" << temp->price << endl;
+            // add availability
+            temp = temp->next;
+        }
+
+    bool bookSeat(int seatNum){
+        Node* temp = head;
+        while (temp != nullptr) {
+            if (temp->seatNum == seatNum && !temp->booked) {
+                temp->booked = true;
+                return true;
+            }
+            temp = temp->next;
+        }
+        return false; // Seat not found 
+    }
+    bool cancelSeat(int seatNum) {
+        Node* temp = head;
+        while (temp != nullptr) {
+            if (temp->seatNum == seatNum && temp->booked) {
+                temp->booked = false;
+                return true;
+            }
+            temp = temp->next;
+        }
+        return false; // Seat not found 
+    }
+    }
+
 class BookingSystem{
     Node *head;
-    vector<vector<Node>>seats;
 
     public:
-    BookingSystem() : head(nullptr) {
+    /*
+    Row rows[3]; // 3 sample rows
+    public:
+
+    BookingSystem() {
         initializeSeats();
     }
 
-    void initializeSeats(){
-        return;
+    void initializeSeats() {
+        for (int row = 0; row < 3; ++r) {
+            for (int seat = 1; seat <= 10; seat++) {
+                double price = 50 + (row * 15); // idea to have different prices for rows
+                bool VIP = (i == 1);  // First row has merch bundle
+                rows[row].addSeat(seat, price);
+            }
+        }
     }
+    */
+
     void BookSeat(){
         int seat;
         cout << "Enter seat number you wish to book: "<< endl;
@@ -60,7 +123,8 @@ class BookingSystem{
         }
     }
 
-    void CancelSeat(){
+
+    void RemoveSeat(){
         int seatNum;
         cout << "Enter seat number you wish to cancel: "<< endl;
         cin >> seatNum;
@@ -77,7 +141,7 @@ class BookingSystem{
         return;
         }
 
-        for (int i = 0; temp != nullptr && i < seatNum - 1; i++) {
+        for (int i = 0; temp != NULL && i < seatNum - 1; i++) {
             temp = temp->next;
         }
         Node* nodeDelete = temp->next;
@@ -103,12 +167,11 @@ class BookingSystem{
 
 int main(){
     BookingSystem list; 
-    list.printSeats();
 //creating menu
     int choice = 0;
     while (choice != 4){
         cout << "\nWelcome! Choose one of the following options:"
-                "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4. Exit"
+                "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4.Exit"
                 "\nChoose an option (1-4)" << endl;
         cin >> choice;
         cout << "choise is " << choice << endl;
