@@ -39,6 +39,7 @@ public:
 
     Row(){
         head = NULL;
+        tail = NULL;
         rowNum = 0;
     }
 
@@ -47,31 +48,25 @@ public:
         return head;
     }
 //************************************************************** */
-    void addSeat(int seatNum, double price){
-        Node* newNode = new Node(1, seatNum, price);  
+    void addSeat(int rowNum, int seatNum, double price) {
+        Node* newNode = new Node(rowNum, seatNum, price);  
         if (tail == NULL) { // If the list is empty
             head = newNode;
             tail = newNode;
-        }
-        else {  // If there are items in the list
+        } else {  // If there are items in the list
             tail->next = newNode;  
             newNode->prev = tail;  
             tail = newNode;        
         }
     }
 //************************************************************** */
-    void initRowSeats (int numOfSeats){
-        Node *temp = head;
+    void initRowSeats(int rowNum, int numOfSeats) {
         int seatNum = 1;
-        while (temp != NULL){
-            for (int i= 0; i= numOfSeats; i++){
-                addSeat(seatNum, 100);
-                seatNum++;
-            }
-            temp = temp -> next;
+        for (int i = 0; i < numOfSeats; i++) {  // Iterate numOfSeats times
+            addSeat(rowNum, seatNum, 100);      // Add seat to row
+            seatNum++;
         }
     }
-
 //************************************************************** */
     void printSeats() {
         Node* temp = head;
@@ -80,9 +75,6 @@ public:
         }
         while(temp){
             cout << "Row: " << temp->row << ", Seat: " << temp->seatNum << ", Price: $" << temp->price << endl;
-            if(temp ->next != NULL){
-                cout<<"; ";
-            }
             temp = temp -> next;
         }
         cout << endl;
@@ -135,9 +127,9 @@ public:
     }
 
 //************************************************************** */
-    void insertSorted(int value) {
-            Node* newnode = new Node(value);
-            if (head == NULL || head-> seatNum >= value) { //if the list is empty or value is the smallest value
+    void insertSorted(int seat) {
+        Node* newnode = new Node(rowNum, seat, 100);
+            if (head == NULL || head-> seatNum >= seat) { //if the list is empty or value is the smallest value
                 newnode->next = head;
                 if (head != NULL) {
                     head->prev = newnode;
@@ -149,7 +141,7 @@ public:
             }
 
             Node* temp = head;
-            while (temp != NULL && temp->seatNum < value) {
+            while (temp != NULL && temp->seatNum < seat) {
                 temp = temp->next;
             }
 
@@ -178,6 +170,7 @@ public:
         }
         return false; // Seat not found 
         }
+
 };
 
 
@@ -186,6 +179,11 @@ class BookingSystem{
     Node *head;
     Node *tail;
     Node *child;
+    Row row1;
+    Row row2;
+    Row row3;
+    Row row4;
+    Row row5;
 
     public:
     /*
@@ -208,49 +206,81 @@ class BookingSystem{
     */
 
 //************************************************************** */
-    Node* getHead(){
-        return head;
-    }
-//************************************************************** */  
-    void InsertSeat(int seat){
+    void createRows(){ // automate this later
+        row1.initRowSeats(1,10);
+        Node* head1 = row1.getHead();
+        row2.initRowSeats(2,10);
+        Node* head2 = row2.getHead();
+        row3.initRowSeats(3,10);
+        Node* head3 = row3.getHead();
+        row4.initRowSeats(4,10);
+        Node* head4 = row4.getHead();
+        row5.initRowSeats(5,10);
+        Node* head5 = row5.getHead();   
 
-        Node* newnode = new Node(seat);
-        if (tail == NULL) { // If the list is empty
-            head = newnode;
-            tail = newnode;
-        }
-        else {  // If there are items in the list
-            tail->next = newnode;  
-            newnode->prev = tail;  
-            tail = newnode;        
-        }
-    }
+        //linking heads to make a multilevel linked list
 
-     void printList(){
-        Node *temp =  head;
-        if (temp == NULL){
-            cout << "The list is empty!" << endl;
-        }
-        while(temp){
-            cout << temp -> data << " -> ";
-            temp = temp -> next;
-        }
-        cout << "NULL" << endl; 
+        head1 -> child = head2;
+        head2 -> child = head3;
+        head3 -> child = head4;
+        head4 -> child = head5;
     }
-    //************************************************************** */
+//************************************************************** */
+    void printRowSeats(int rowNum) {
+        switch (rowNum) {
+            case 1:
+                cout << "Printing seats for Row 1:" << endl;
+                row1.printSeats();
+                break;
+            case 2:
+                cout << "Printing seats for Row 2:" << endl;
+                row2.printSeats();
+                break;
+            case 3:
+                cout << "Printing seats for Row 3:" << endl;
+                row3.printSeats();
+                break;
+            case 4:
+                cout << "Printing seats for Row 4:" << endl;
+                row4.printSeats();
+                break;
+            case 5:
+                cout << "Printing seats for Row 5:" << endl;
+                row5.printSeats();
+                break;
+            default:
+                cout << "Invalid row number. Please choose a row between 1 and 5." << endl;
+                break;
+        }
+    }
 
 //************************************************************** */
-    void InitAvailSeats(){
-        InsertSeat(1);
-        InsertSeat(2);
-        InsertSeat(3);
-        InsertSeat(4);
-        InsertSeat(5);
-        InsertSeat(6);
-        InsertSeat(7);
-        InsertSeat(8);
-        InsertSeat(9);
-        InsertSeat(10);
+    void removeRowSeat(int rowNum, int seatNum) {
+        switch (rowNum) {
+            case 1:
+                cout << "Removing seat " << seatNum << "from row 1" << endl;
+                row1.removeSeat(seatNum);
+                break;
+            case 2:
+                cout << "Removing seat " << seatNum << "from row 2" << endl;
+                row2.removeSeat(seatNum);
+                break;
+            case 3:
+                cout << "Removing seat " << seatNum << "from row 3" << endl;
+                row3.removeSeat(seatNum);
+                break;
+            case 4:
+                cout << "Removing seat " << seatNum << "from row 4" << endl;
+                row4.removeSeat(seatNum);
+                break;
+            case 5:
+                cout << "Removing seat " << seatNum << "from row 5" << endl;
+                row5.removeSeat(seatNum);
+                break;
+            default:
+                cout << "Invalid row number. Please choose a row between 1 and 5." << endl;
+                break;
+        }
     }
 
 
@@ -259,12 +289,14 @@ class BookingSystem{
 //************************************************************** */
 
 int main(){
-    Row list;
-    //BookingSystem list; 
-    list.initRowSeats(5);
+    
+    BookingSystem list; 
+    list.createRows();
     int seat;
+    
 //creating menu
     int choice = 0;
+    int rowNum = 0;
     do{
         cout << "\nWelcome! Choose one of the following options:"
                     "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4.Exit"
@@ -272,19 +304,22 @@ int main(){
         cin >> choice;
         cout << "choice is " << choice << endl;
         if(choice == 1){
-            cout << "The available seats are: ";
-            list.printList();
+            cout << "Rows 1-5 are available, choose one of them: ";
+            cin >> rowNum;
+            list.printRowSeats(rowNum);
             cout << "\nType the chosen seat from the ones available: ";
             cin >> seat;
-            list.removeSeat(seat);
+            list.removeRowSeat(rowNum, seat);
         }
         else if(choice == 2){
             cout << "Enter seat number you wish to cancel: "<< endl;
             cin >> seat;
-            list.insertSorted(seat);
+            //list.insertSorted(seat);
         }
         else if(choice == 3){
-            list.printList();
+            for (int i=1; i<=5; i++){
+                list.printRowSeats(i);
+            }
         }
 
         else if(choice == 4){
