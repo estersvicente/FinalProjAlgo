@@ -2,7 +2,7 @@
 
 using namespace std;
 
-class Node{
+class Node{ // each node represents 1 seat
     public:
     int row;
     int seatNum;
@@ -10,52 +10,84 @@ class Node{
     bool booked;
     bool VIP;  
 
+    Node *next; // points to the next node on the list
+    Node *prev; // points to the previous node on the list
+    Node *child; // points to the child of that node (multilevel linked list)
 
-    Node *next;
     Node(){
-        next=NULL;
+        next = NULL;
+        prev = NULL;
     }
 
- Node(int row, int seatNum, double price, bool booked = false, bool VIP =false){
+    Node(int row, int seatNum, double price, bool booked = false, bool VIP =false){
         this -> row =row;
         this -> seatNum = seatNum;
         this -> price = price;
         this -> booked = false;
         this -> VIP = false;
         this -> next = NULL;
+        this -> prev = NULL;
+        this -> child = NULL;
     } 
 };
-
+//-----------------------------------------------------------------------------------/
 class Row {
 public:
+    int rowNum;
     Node* head;
+    Node *tail;
 
-    Row() : head(nullptr) {
-
+    Row(){
+        head = NULL;
+        rowNum = 0;
     }
 
+//************************************************************** */
+    Node* getHead(){
+        return head;
+    }
+//************************************************************** */
     void addSeat(int seatNum, double price){
         Node* newNode = new Node(1, seatNum, price);  
-        if (head == nullptr) {
+        if (tail == NULL) { // If the list is empty
             head = newNode;
-        } 
-        else{
-            Node* temp = head;
-            while (temp->next != nullptr) {
-                temp = temp->next;
+            tail = newNode;
+        }
+        else {  // If there are items in the list
+            tail->next = newNode;  
+            newNode->prev = tail;  
+            tail = newNode;        
+        }
+    }
+//************************************************************** */
+    void initRowSeats (int numOfSeats){
+        Node *temp = head;
+        int seatNum = 1;
+        while (temp != NULL){
+            for (int i= 0; i= numOfSeats; i++){
+                addSeat(seatNum, 100);
+                seatNum++;
             }
-            temp->next = newNode;
+            temp = temp -> next;
         }
     }
 
+//************************************************************** */
     void printSeats() {
         Node* temp = head;
-        while (temp != nullptr) {
-            cout << "Row: " << temp->row << ", Seat: " << temp->seatNum << ", Price: $" << temp->price << endl;
-            // add availability
-            temp = temp->next;
+        if (temp == NULL){
+            cout << "There are no more available seats. We're sorry!" << endl;
         }
-
+        while(temp){
+            cout << "Row: " << temp->row << ", Seat: " << temp->seatNum << ", Price: $" << temp->price << endl;
+            if(temp ->next != NULL){
+                cout<<"; ";
+            }
+            temp = temp -> next;
+        }
+        cout << endl;
+    }
+//************************************************************** */
     bool bookSeat(int seatNum){
         Node* temp = head;
         while (temp != nullptr) {
@@ -67,6 +99,74 @@ public:
         }
         return false; // Seat not found 
     }
+
+//************************************************************** */
+     void removeSeat(int seatNum) {
+        // If the list is empty
+        if (head == NULL) {
+            cout << "No seats to remove!" << endl;
+            return;
+        }
+        
+        Node *temp = head;
+        // Traverse the list to find the node with the matching seat number
+        while (temp != NULL && temp->seatNum != seatNum) {
+            temp = temp->next;
+        }
+
+        if (temp == NULL) {
+            cout << "Seat number " << seatNum << " not found!" << endl;
+            return;
+        }
+
+        if (temp->prev != NULL) {
+            temp->prev->next = temp->next;
+        } 
+        else {
+            head = temp->next; // If temp is head, update head
+        }
+        if (temp->next != NULL) {
+            temp->next->prev = temp->prev;
+        } 
+        else {
+            tail = temp->prev; // If temp is tail, update tail
+        }
+        delete temp;
+    }
+
+//************************************************************** */
+    void insertSorted(int value) {
+            Node* newnode = new Node(value);
+            if (head == NULL || head-> seatNum >= value) { //if the list is empty or value is the smallest value
+                newnode->next = head;
+                if (head != NULL) {
+                    head->prev = newnode;
+                } else {
+                    tail = newnode;
+                }
+                head = newnode;
+                return;
+            }
+
+            Node* temp = head;
+            while (temp != NULL && temp->seatNum < value) {
+                temp = temp->next;
+            }
+
+            if (temp == NULL) {
+                tail->next = newnode;
+                newnode->prev = tail;
+                tail = newnode;
+                return;
+            }
+
+            newnode->next = temp;
+            newnode->prev = temp->prev;
+            temp->prev->next = newnode;
+            temp->prev = newnode;
+    }
+
+//************************************************************** */
     bool cancelSeat(int seatNum) {
         Node* temp = head;
         while (temp != nullptr) {
@@ -77,11 +177,15 @@ public:
             temp = temp->next;
         }
         return false; // Seat not found 
-    }
-    }
+        }
+};
 
+
+//-----------------------------------------------------------------------------------/
 class BookingSystem{
     Node *head;
+    Node *tail;
+    Node *child;
 
     public:
     /*
@@ -103,50 +207,23 @@ class BookingSystem{
     }
     */
 
-    void BookSeat(){
-        int seat;
-        cout << "Enter seat number you wish to book: "<< endl;
-        cin >> seat;
-
-        Node* newnode = new Node(seat); 
-        
-        if (head == NULL){ // if there are no items in the list
-            head = newnode;
-        }
-        else 
-        {              // if there are items on the list 
-            Node *temp = head;
-            while (temp->next != NULL){
-                temp = temp -> next;
-            }
-            temp -> next = newnode; // next of newnode will atomatically point to NULL (bc of Class Node setup)
-        }
+//************************************************************** */
+    Node* getHead(){
+        return head;
     }
+//************************************************************** */  
+    void InsertSeat(int seat){
 
-
-    void RemoveSeat(){
-        int seatNum;
-        cout << "Enter seat number you wish to cancel: "<< endl;
-        cin >> seatNum;
-        Node* temp = head;
-
-        if (head == NULL){ //if list is empty
-            cout << "The list is empty!" << endl;
-            return;
+        Node* newnode = new Node(seat);
+        if (tail == NULL) { // If the list is empty
+            head = newnode;
+            tail = newnode;
         }
-
-        if (seatNum == 0) {
-        head = temp->next;
-        delete temp;
-        return;
+        else {  // If there are items in the list
+            tail->next = newnode;  
+            newnode->prev = tail;  
+            tail = newnode;        
         }
-
-        for (int i = 0; temp != NULL && i < seatNum - 1; i++) {
-            temp = temp->next;
-        }
-        Node* nodeDelete = temp->next;
-        temp->next = nodeDelete->next;
-        delete nodeDelete;
     }
 
      void printList(){
@@ -160,45 +237,66 @@ class BookingSystem{
         }
         cout << "NULL" << endl; 
     }
+    //************************************************************** */
+
+//************************************************************** */
+    void InitAvailSeats(){
+        InsertSeat(1);
+        InsertSeat(2);
+        InsertSeat(3);
+        InsertSeat(4);
+        InsertSeat(5);
+        InsertSeat(6);
+        InsertSeat(7);
+        InsertSeat(8);
+        InsertSeat(9);
+        InsertSeat(10);
+    }
+
 
 };
 
 //************************************************************** */
 
 int main(){
-    BookingSystem list; 
+    Row list;
+    //BookingSystem list; 
+    list.initRowSeats(5);
+    int seat;
 //creating menu
     int choice = 0;
-    while (choice != 4){
+    do{
         cout << "\nWelcome! Choose one of the following options:"
-                "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4.Exit"
-                "\nChoose an option (1-4)" << endl;
+                    "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4.Exit"
+                    "\nChoose an option (1-4)" << endl;
         cin >> choice;
-        cout << "choise is " << choice << endl;
-        switch (choice)
-        {
-        case (1):
-            list.BookSeat();
-        
-        case (2):
-            list.CancelSeat();
-
-        case (3):
+        cout << "choice is " << choice << endl;
+        if(choice == 1){
+            cout << "The available seats are: ";
             list.printList();
-        
-
-        case (4):
-            cout<< "Exiting the system. Goodbye!"<< endl;
-            
-            break;
-
-        default:
-            cout << "input is not valid" << endl;
-            break;
+            cout << "\nType the chosen seat from the ones available: ";
+            cin >> seat;
+            list.removeSeat(seat);
+        }
+        else if(choice == 2){
+            cout << "Enter seat number you wish to cancel: "<< endl;
+            cin >> seat;
+            list.insertSorted(seat);
+        }
+        else if(choice == 3){
+            list.printList();
         }
 
+        else if(choice == 4){
+            cout<< "Exiting the system. Goodbye!"<< endl;
+            } 
+
+        else{
+            cout << "input is not valid" << endl;
+            
+        }
     }
-    
+    while (choice != 4);
     return 0;
         
 }
