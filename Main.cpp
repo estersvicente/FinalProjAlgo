@@ -13,18 +13,26 @@ int main(){
     int choice = 0;
     int rowNum = 0;
     double price;
+    int  sortType = 0;
     do{
         cout << "\nWelcome! Choose one of the following options:"
                     "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4.Exit"
                     "\nChoose an option (1-4)" << endl;
         cin >> choice;
-        cout << "choice is " << choice << endl;
+
         if(choice == 1){
-            cout << "Rows 1 to " << NumOfRows << " are available, choose your desired row:";
+            cout << "\nRows 1 to " << NumOfRows << " are available, choose your desired row: ";
             cin >> rowNum;
             list.printRowSeats(rowNum);
+            cout << "\nType the 1 if you wish to sort seats by price: ";
+            cin >> sortType;
+            if(sortType == 1){
+                list.sortSeatsByPrice(rowNum);
+                list.printRowSeats(rowNum);
+            }
             cout << "\nType the chosen seat from the ones available: ";
             cin >> seat;
+            
             list.removeRowSeat(rowNum, seat);
         }
         else if(choice == 2){

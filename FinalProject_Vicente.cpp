@@ -10,7 +10,6 @@ class Node{ // each node represents 1 seat
     int row;
     int seatNum;
     double price;
-    bool booked;
     bool VIP;  
 
     Node *next; // points to the next node on the list
@@ -23,11 +22,10 @@ class Node{ // each node represents 1 seat
         child = NULL;
     }
 
-    Node(int row, int seatNum, double price, bool booked = false, bool VIP =false){
+    Node(int row, int seatNum, double price, bool VIP =false){
         this -> row =row;
         this -> seatNum = seatNum;
         this -> price = price;
-        this -> booked = false;
         this -> VIP = false;
         this -> next = NULL;
         this -> prev = NULL;
@@ -84,18 +82,6 @@ public:
         }
         cout << endl;
     }
-//************************************************************** */
-    bool bookSeat(int seatNum){  //edit this to find seat 
-        Node* temp = head;
-        while (temp != nullptr) {
-            if (temp->seatNum == seatNum && !temp->booked) {
-                temp->booked = true;
-                return true;
-            }
-            temp = temp->next;
-        }
-        return false; // Seat not found 
-    }
 
 //************************************************************** */
      void removeSeat(int seatNum) {
@@ -130,20 +116,7 @@ public:
         }
         delete temp;
     }
-
 //************************************************************** */
-    bool cancelSeat(int seatNum) {
-        Node* temp = head;
-        while (temp != nullptr) {
-            if (temp->seatNum == seatNum && temp->booked) {
-                temp->booked = false;
-                return true;
-            }
-            temp = temp->next;
-        }
-        return false; // Seat not found 
-    }
-    //************************************************************** 
     void quickSort(Node* head, Node* tail){
         Node* pivot = tail; //Making pivot the tail
         Node* left = head;
@@ -169,15 +142,15 @@ public:
         quickSort(head, left->prev);
         quickSort(left->next, tail);
     }
-
+//************************************************************** */
     void sortRowPrice(Row& row) {
         if (row.head && row.tail) {
             quickSort(row.head, row.tail);
         }
     }
+};
 
-    };
-
+//-----------------------------------------------------------------------------------/
 class BookingSystem{
     public:
     vector<Row> rows;
@@ -248,19 +221,7 @@ class BookingSystem{
         temp->next = nodeDelete->next;
         delete nodeDelete;
     }
-
-     void printList(){
-        Node *temp =  head;
-        if (temp == NULL){
-            cout << "The list is empty!" << endl;
-        }
-        while(temp){
-            cout << temp -> data << " -> ";
-            temp = temp -> next;
-        }
-        cout << "NULL" << endl; 
-    }
-    //**************************************************************
+//************************************************************** */
     void sortSeatsByPrice(int rowNum) {
         if (rowNum > 0 && rowNum <= numOfRows) {
             rows[rowNum - 1].sortRowPrice(rows[rowNum - 1]); 
@@ -270,43 +231,4 @@ class BookingSystem{
         }
     }
 };
-
 //************************************************************** */
-
-int main(){
-    BookingSystem list; 
-//creating menu
-    int choice = 0;
-    while (choice != 4){
-        cout << "\nWelcome! Choose one of the following options:"
-                "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4.Exit"
-                "\nChoose an option (1-4)" << endl;
-        cin >> choice;
-        cout << "choise is " << choice << endl;
-        switch (choice)
-        {
-        case (1):
-            list.BookSeat();
-        
-        case (2):
-            list.CancelSeat();
-
-        case (3):
-            list.printList();
-        
-
-        case (4):
-            cout<< "Exiting the system. Goodbye!"<< endl;
-            
-            break;
-
-        default:
-            cout << "input is not valid" << endl;
-            break;
-        }
-
-    }
-    
-    return 0;
-        
-}
