@@ -9,6 +9,7 @@ You can then choose an option and the code will execute, and the same question w
 
 This repository should contain the following folders/files:
 - FinalProject_Vicente.cpp
+- Main.cpp
 - test_project.cpp
 
 The 'FinalProject_Vicente.cpp' file contains the code that runs the program. 

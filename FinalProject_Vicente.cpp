@@ -143,7 +143,7 @@ public:
         }
         return false; // Seat not found 
     }
-//************************************************************** 
+    //************************************************************** 
     void quickSort(Node* head, Node* tail){
         Node* pivot = tail; //Making pivot the tail
         Node* left = head;
@@ -176,9 +176,8 @@ public:
         }
     }
 
-};
+    };
 
-//-----------------------------------------------------------------------------------/
 class BookingSystem{
     public:
     vector<Row> rows;
@@ -245,18 +244,21 @@ class BookingSystem{
         while (temp != NULL && temp->seatNum < seatNum) {
             temp = temp->next;
         }
+        Node* nodeDelete = temp->next;
+        temp->next = nodeDelete->next;
+        delete nodeDelete;
+    }
 
-        // Insert the new node in the sorted position
-        if (temp == NULL) {  // Insert at the end
-            row.tail->next = newNode;
-            newNode->prev = row.tail;
-            row.tail = newNode;
-        } else {  // Insert in the middle
-            newNode->next = temp;
-            newNode->prev = temp->prev;
-            temp->prev->next = newNode;
-            temp->prev = newNode;
+     void printList(){
+        Node *temp =  head;
+        if (temp == NULL){
+            cout << "The list is empty!" << endl;
         }
+        while(temp){
+            cout << temp -> data << " -> ";
+            temp = temp -> next;
+        }
+        cout << "NULL" << endl; 
     }
     //**************************************************************
     void sortSeatsByPrice(int rowNum) {
@@ -270,3 +272,41 @@ class BookingSystem{
 };
 
 //************************************************************** */
+
+int main(){
+    BookingSystem list; 
+//creating menu
+    int choice = 0;
+    while (choice != 4){
+        cout << "\nWelcome! Choose one of the following options:"
+                "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4.Exit"
+                "\nChoose an option (1-4)" << endl;
+        cin >> choice;
+        cout << "choise is " << choice << endl;
+        switch (choice)
+        {
+        case (1):
+            list.BookSeat();
+        
+        case (2):
+            list.CancelSeat();
+
+        case (3):
+            list.printList();
+        
+
+        case (4):
+            cout<< "Exiting the system. Goodbye!"<< endl;
+            
+            break;
+
+        default:
+            cout << "input is not valid" << endl;
+            break;
+        }
+
+    }
+    
+    return 0;
+        
+}
