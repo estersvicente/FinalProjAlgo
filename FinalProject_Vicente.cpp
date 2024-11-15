@@ -117,30 +117,35 @@ public:
         delete temp;
     }
 //************************************************************** */
-    void quickSort(Node* head, Node* tail){
-        Node* pivot = tail; //Making pivot the tail
-        Node* left = head;
-        Node* right = head;
+    void quickSort(Node* head, Node* tail) {
+    // Base Case: If the list is empty or contains one element, it's already sorted
+    if (!head || !tail || head == tail || tail->next == head) {
+        return;
+    }
 
-        while (right != tail) {
-            if (right->price < pivot->price) {
-                // Swap all parameters
-                swap(left->price, right->price);
-                swap(left->seatNum, right->seatNum);
-                swap(left->row, right->row);
-                left = left->next;
-            }
-            right = right->next;
+    Node* pivot = tail;   // Pivot is the last node
+    Node* left = head;    // Pointer for the smaller elements
+    Node* right = head;   // Traversal pointer
+
+    while (right != tail) {
+        if (right->price < pivot->price) {
+            // Swap attributes of nodes
+            swap(left->price, right->price);
+            swap(left->seatNum, right->seatNum);
+            swap(left->row, right->row);
+            left = left->next; // Move left pointer
         }
+        right = right->next; // Move right pointer
+    }
 
-        //Swap left and pivot
-        swap(left->price, pivot->price);
-        swap(left->seatNum, pivot->seatNum);
-        swap(left->row, pivot->row);
+    // Swap pivot with the partitioning point
+    swap(left->price, pivot->price);
+    swap(left->seatNum, pivot->seatNum);
+    swap(left->row, pivot->row);
 
-        // Sort the sublists 
-        quickSort(head, left->prev);
-        quickSort(left->next, tail);
+    // Recursive sorting of sublists
+    quickSort(head, left->prev); // Sort elements before pivot
+    quickSort(left->next, tail); // Sort elements after pivot
     }
 //************************************************************** */
     void sortRowPrice(Row& row) {

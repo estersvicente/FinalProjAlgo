@@ -3,8 +3,8 @@
 
 int main(){
     
-    int NumOfRows = 3;
-    int NumOfSeats = 4;
+    int NumOfRows = 20;
+    int NumOfSeats = 5;
     BookingSystem list(NumOfRows); 
     list.createRows(NumOfSeats);
     int seat;
@@ -16,7 +16,7 @@ int main(){
     int  sortType = 0;
     do{
         cout << "\nWelcome! Choose one of the following options:"
-                    "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4.Exit"
+                    "\n1. Book a seat \n2. Cancel a seat \n3. Show available seats \n4. Exit"
                     "\nChoose an option (1-4)" << endl;
         cin >> choice;
 
