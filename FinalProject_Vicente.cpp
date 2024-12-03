@@ -117,40 +117,56 @@ public:
         delete temp;
     }
 //************************************************************** */
-    void quickSort(Node* head, Node* tail) {
-    // Base Case: If the list is empty or contains one element, it's already sorted
-    if (!head || !tail || head == tail || tail->next == head) {
-        return;
-    }
-
-    Node* pivot = tail;   // Pivot is the last node
-    Node* left = head;    // Pointer for the smaller elements
-    Node* right = head;   // Traversal pointer
-
-    while (right != tail) {
-        if (right->price < pivot->price) {
-            // Swap attributes of nodes
-            swap(left->price, right->price);
-            swap(left->seatNum, right->seatNum);
-            swap(left->row, right->row);
-            left = left->next; // Move left pointer
+    void quickSort(Node* head, Node* tail, bool (*compare)(Node*, Node*)) {
+        if (!head || !tail || head == tail || tail->next == head) {
+            return;
         }
-        right = right->next; // Move right pointer
+
+        Node* pivot = tail;   // Pivot is the last node
+        Node* left = head;    // Pointer for the smaller elements
+        Node* right = head;   // Traversal pointer
+
+        while (right != tail) {
+            if (compare(right, pivot)) {
+                // Swap attributes of nodes
+                swap(left->seatNum, right->seatNum);
+                swap(left->price, right->price);
+                swap(left->row, right->row);
+                left = left->next; // Move left pointer
+            }
+            right = right->next; // Move right pointer
+        }
+
+        // Swap pivot with the partitioning point
+        swap(left->seatNum, pivot->seatNum);
+        swap(left->price, pivot->price);
+        swap(left->row, pivot->row);
+
+        // Recursive sorting of sublists
+        quickSort(head, left->prev, compare); // Sort elements before pivot
+        quickSort(left->next, tail, compare); // Sort elements after pivot
     }
 
-    // Swap pivot with the partitioning point
-    swap(left->price, pivot->price);
-    swap(left->seatNum, pivot->seatNum);
-    swap(left->row, pivot->row);
+//************************************************************** */
+    static bool compareBySeatNum(Node* a, Node* b) {
+        return a->seatNum < b->seatNum;
+    }
 
-    // Recursive sorting of sublists
-    quickSort(head, left->prev); // Sort elements before pivot
-    quickSort(left->next, tail); // Sort elements after pivot
+//************************************************************** */
+    static bool compareByPrice(Node* a, Node* b) {
+        return a->price < b->price;
+    }
+
+//************************************************************** */
+    void sortRowSeatNumber() {
+        if (head && tail) {
+            quickSort(head, tail, compareBySeatNum);
+        }
     }
 //************************************************************** */
-    void sortRowPrice(Row& row) {
-        if (row.head && row.tail) {
-            quickSort(row.head, row.tail);
+    void sortRowPrice() {
+        if (head && tail) {
+            quickSort(head, tail, compareByPrice);
         }
     }
 };
@@ -193,43 +209,63 @@ class BookingSystem{
     }
 
 //************************************************************** */
-     void insertSortedSeat(int rowNum, int seatNum, double price) {
-        // Check if the rowNum is valid
-        if (rowNum <= 0 || rowNum > numOfRows) {
-            cout << "Invalid row number." << endl;
-            return;
-        }
-
-        // Find the specified row
-        Row& row = rows[rowNum - 1];  // -1 because rows are 0-indexed in the vector
-
-        Node* newNode = new Node(rowNum, seatNum, price);
-
-        // If the row is empty or the seat should be placed at the beginning
-        if (row.head == NULL || row.head->seatNum >= seatNum) {
-            newNode->next = row.head;
-            if (row.head != NULL) {
-                row.head->prev = newNode;
-            } else {
-                row.tail = newNode;
-            }
-            row.head = newNode;
-            return;
-        }
-
-        // Traverse the row to find the correct position for insertion
-        Node* temp = row.head;
-        while (temp != NULL && temp->seatNum < seatNum) {
-            temp = temp->next;
-        }
-        Node* nodeDelete = temp->next;
-        temp->next = nodeDelete->next;
-        delete nodeDelete;
+    void insertSortedSeat(int rowNum, int seatNum, double price) {
+    // Check if the rowNum is valid
+    if (rowNum <= 0 || rowNum > numOfRows) {
+        cout << "Invalid row number." << endl;
+        return;
     }
+
+    Row& row = rows[rowNum - 1]; 
+
+    Node* newNode = new Node(rowNum, seatNum, price);
+
+    if (row.head == NULL) {
+        row.head = newNode;
+        row.tail = newNode;
+        return;
+    }
+
+    if (seatNum < row.head->seatNum) {
+        newNode->next = row.head;
+        row.head->prev = newNode;
+        row.head = newNode;
+        return;
+    }
+
+    Node* temp = row.head;
+    while (temp != NULL && temp->seatNum < seatNum) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        newNode->prev = row.tail;
+        row.tail->next = newNode;
+        row.tail = newNode;
+        return;
+    }
+
+    newNode->next = temp;
+    newNode->prev = temp->prev;
+    if (temp->prev != NULL) {
+        temp->prev->next = newNode;
+    }
+    temp->prev = newNode;
+}
 //************************************************************** */
     void sortSeatsByPrice(int rowNum) {
         if (rowNum > 0 && rowNum <= numOfRows) {
-            rows[rowNum - 1].sortRowPrice(rows[rowNum - 1]); 
+            rows[rowNum - 1].sortRowPrice(); 
+        } 
+        else {
+        cout << "Invalid row number, choose another." << endl;
+        }
+    }
+
+ //************************************************************** */
+    void sortSeatsBySeatNum(int rowNum) {
+        if (rowNum > 0 && rowNum <= numOfRows) {
+            rows[rowNum - 1].sortRowSeatNumber(); 
         } 
         else {
         cout << "Invalid row number, choose another." << endl;
